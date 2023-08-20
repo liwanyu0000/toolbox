@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: any  #provider 依赖
+  http: any      #http 依赖
 
 dev_dependencies:
   flutter_test:

@@ -2,9 +2,25 @@ import 'package:flutter/material.dart';
 import 'Global/Global.dart';
 import 'BasicWidget/BasicContainer.dart';
 import 'PageWidget/SettingPage.dart';
+import 'PageWidget/ErrorPage.dart';
+import 'Global/HttpRequest.dart';
 
-void main(List<String> args) {
-  runApp(const App());
+void main(List<String> args) async {
+  // 从数据库获取配置信息，更改设置, 如果获取失败，显示网络错误页面
+  var themeInfo = await HttpRequest.get("/getThemeInfo");
+  var isOK = await getToolList();
+  getSeeToolList();
+  getStarToolList();
+  if (themeInfo != "error" && isOK) {
+    Global.themeColor = Color(stringToJson(themeInfo)[0]['themeColor']);
+    Global.imgPath = stringToJson(themeInfo)[0]['img'];
+    Global.opacity =
+        double.parse(stringToJson(themeInfo)[0]['opacity'].toString());
+    Global.icons["size"] = stringToJson(themeInfo)[0]['size'].toString();
+    runApp(const App());
+  } else {
+    runApp(const ErrorPage("网络错误", Icons.error));
+  }
 }
 
 class App extends StatefulWidget {
@@ -15,6 +31,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  //响应监听
   @override
   void initState() {
     super.initState();
@@ -23,6 +40,7 @@ class _AppState extends State<App> {
     });
   }
 
+  // 结束监听
   @override
   void dispose() {
     super.dispose();
@@ -37,15 +55,14 @@ class _AppState extends State<App> {
             appBar: AppBar(
                 backgroundColor: Global.themeColor,
                 title: Center(
-                    child: Center(
-                        child: Text(
-                            Global.pageInfoList[Global.pageIndex]["title"])))),
+                    child:
+                        Text(Global.pageInfoList[Global.pageIndex]["title"]))),
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: Global.pageIndex,
                 selectedIconTheme: const IconThemeData(size: 30),
                 unselectedIconTheme: const IconThemeData(size: 25),
                 selectedItemColor: Global.themeColor,
-                unselectedItemColor: const Color.fromARGB(255, 64, 56, 56),
+                unselectedItemColor: const Color.fromARGB(255, 155, 152, 152),
                 items: const [
                   BottomNavigationBarItem(
                       icon: Icon(Icons.all_inbox_outlined), label: "全部工具"),

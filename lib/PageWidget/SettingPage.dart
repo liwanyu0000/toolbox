@@ -2,6 +2,7 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import '../Global/Global.dart';
+import '../Global/HttpRequest.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -11,6 +12,17 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  //响应监听
+  @override
+  void initState() {
+    super.initState();
+    Global.listening.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
   // 创建设置选项
   Widget _creatSettingItem(
       {required String title, // 设置名称
@@ -18,8 +30,14 @@ class _SettingPageState extends State<SettingPage> {
       required List<Widget> Function() fun}) {
     // 遍历函数
     return ListTile(
-        title: Text(title),
-        trailing: const Icon(Icons.keyboard_arrow_right),
+        title: Text(
+          title,
+          style: TextStyle(color: Global.themeColor, fontSize: 30),
+        ),
+        trailing: Icon(
+          Icons.keyboard_arrow_right,
+          color: Global.themeColor,
+        ),
         // 创建dialog
         onTap: () async {
           await showDialog(
@@ -37,7 +55,6 @@ class _SettingPageState extends State<SettingPage> {
         // 设置内边距
         padding: const EdgeInsets.all(10),
         // 设置每条List的分隔符
-
         children: [
           // 分割线
           const Divider(),
@@ -45,12 +62,16 @@ class _SettingPageState extends State<SettingPage> {
               title: "界面颜色",
               dialogTitle: "选择颜色",
               fun: () {
-                List<Widget> list = [];
-                for (Color color in Global.themeColorList) {
-                  list.add(SimpleDialogOption(
+                List<Widget> list = Global.themeColorList.map((vaule) {
+                  return SimpleDialogOption(
                       onPressed: () {
                         // 修改全局变量
-                        Global.themeColor = color;
+                        Global.themeColor = vaule;
+                        // 修改数据库
+                        HttpRequest.post("/updateThemeInfo", {
+                          "key": "themeColor",
+                          "vaule": Global.themeColor.value.toString()
+                        });
                         // 提示变量已修改
                         Global.listening.listen();
                         // 退出dialog
@@ -58,9 +79,9 @@ class _SettingPageState extends State<SettingPage> {
                       },
                       child: Icon(
                         Icons.square,
-                        color: color,
-                      )));
-                }
+                        color: vaule,
+                      ));
+                }).toList();
                 return list;
               }),
           const Divider(),
@@ -68,16 +89,17 @@ class _SettingPageState extends State<SettingPage> {
               title: "界面背景",
               dialogTitle: "选择背景",
               fun: () {
-                List<Widget> list = [];
-                for (String imgPath in Global.imgPathList) {
-                  list.add(SimpleDialogOption(
+                List<Widget> list = Global.imgPathList.map((vaule) {
+                  return SimpleDialogOption(
                       onPressed: () {
-                        Global.imgPath = imgPath;
+                        Global.imgPath = vaule;
+                        HttpRequest.post("/updateThemeInfo",
+                            {"key": "img", "vaule": Global.imgPath});
                         Global.listening.listen();
                         Navigator.pop(context);
                       },
-                      child: Image(image: AssetImage(imgPath))));
-                }
+                      child: Image(image: AssetImage(vaule)));
+                }).toList();
                 return list;
               }),
           const Divider(),
@@ -102,6 +124,10 @@ class _SettingPageState extends State<SettingPage> {
                   list.add(SimpleDialogOption(
                       onPressed: () {
                         Global.opacity = opacity;
+                        HttpRequest.post("/updateThemeInfo", {
+                          "key": "opacity",
+                          "vaule": Global.opacity.toString()
+                        });
                         Global.listening.listen();
                         Navigator.pop(context);
                       },
@@ -110,8 +136,26 @@ class _SettingPageState extends State<SettingPage> {
                 return list;
               }),
           const Divider(),
-          // _creatSettingItem("工具图标尺寸", () {}),
-          // const Divider()
+          _creatSettingItem(
+              title: "图标尺寸",
+              dialogTitle: "选择尺寸",
+              fun: () {
+                List<Widget> list = Global.iconsList.map((vaule) {
+                  return SimpleDialogOption(
+                      onPressed: () {
+                        Global.icons = vaule;
+                        HttpRequest.post("/updateThemeInfo", {
+                          "key": "size",
+                          "vaule": Global.icons['size'] ?? '60'
+                        });
+                        Global.listening.listen();
+                        Navigator.pop(context);
+                      },
+                      child: Text(vaule["name"] ?? ""));
+                }).toList();
+                return list;
+              }),
+          const Divider()
         ]);
   }
 }
