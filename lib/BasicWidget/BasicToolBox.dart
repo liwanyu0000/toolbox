@@ -110,7 +110,7 @@ class ToolButton extends StatelessWidget {
         // 重新加载浏览列表(当seeCount等于1时才执行)
         if (Global.toolList[toolTypeName]![index].seeCount == 1) {
           getSeeToolList();
-          // 界面实现
+          // 界面刷新
           Global.listening.listen();
         }
         // 修改数据库

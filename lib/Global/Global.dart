@@ -5,6 +5,7 @@ import '../PageWidget/HomePage.dart';
 import '../PageWidget/SettingPage.dart';
 import './HttpRequest.dart';
 import '../ToolRouter/NonToolRouter.dart';
+import '../ToolRouter//Timer/TimerToolRouter.dart';
 
 class Global {
   // 页面索引
@@ -57,9 +58,9 @@ class Global {
   // 开始监听监听
   static Listening listening = Listening();
   // className与ToolRouter的映射
-  static Map<String, Widget> getToolRouter = {};
+  static Map<String, Widget> getToolRouter = {"Timer": const TimerToolRouter()};
   // 图标映射
-  static Map<String, IconData> getIcon = {};
+  static Map<String, IconData> getIcon = {"Timer": Icons.timer};
   // 工具列表
   static Map<String, List<Tool>> toolList = {};
   // 收藏管理列表
