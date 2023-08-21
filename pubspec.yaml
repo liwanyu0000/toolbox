@@ -33,3 +33,7 @@ flutter:
     - images/11.png
     - images/12.jpg
     - images/13.jpg
+  fonts:
+    - family: DiaryIcon
+      fonts:
+        - asset: fonts/iconfont.ttf

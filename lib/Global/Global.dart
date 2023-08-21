@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:toolbox/ToolRouter/Diary/DiaryToolRouter.dart';
 import '../PageWidget/AllToolPage.dart';
 import '../PageWidget/HomePage.dart';
 import '../PageWidget/SettingPage.dart';
@@ -58,9 +59,15 @@ class Global {
   // 开始监听监听
   static Listening listening = Listening();
   // className与ToolRouter的映射
-  static Map<String, Widget> getToolRouter = {"Timer": const TimerToolRouter()};
+  static Map<String, Widget> getToolRouter = {
+    "Timer": const TimerToolRouter(),
+    "Diary": const DiaryToolRouter()
+  };
   // 图标映射
-  static Map<String, IconData> getIcon = {"Timer": Icons.timer};
+  static Map<String, IconData> getIcon = {
+    "Timer": Icons.timer,
+    "Diary": Icons.note_alt
+  };
   // 工具列表
   static Map<String, List<Tool>> toolList = {};
   // 收藏管理列表
